@@ -1,10 +1,10 @@
-package poa.poachatv3.events.holders;
+package poa.poachatv3.util.inventories.holders;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class GradientHolder implements InventoryHolder {
+public class ChatHolder implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return null;

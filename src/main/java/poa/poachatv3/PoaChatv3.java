@@ -24,13 +24,16 @@ public final class PoaChatv3 extends JavaPlugin {
         pm.registerEvents(new Chat(), this);
         pm.registerEvents(new InvClick(), this);
         pm.registerEvents(new InvClose(), this);
-        pm.registerEvents(new Leave(), this);
+        pm.registerEvents(new JoinLeave(), this);
         pm.registerEvents(new Click(), this);
 
         getCommand("chatcolor").setExecutor(new ChatColorCMD());
         getCommand("chatadmin").setExecutor(new ChatAdmin());
         getCommand("titles").setExecutor(new TagsCMD());
 
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            JoinLeave.joinSetup(p);
+        }
 
     }
 

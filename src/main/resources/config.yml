@@ -1,2 +1,5 @@
 DefaultChatColor: "&7"
 DefaultNameColor: "&8"
+
+
+UsePlayerVaults: true
