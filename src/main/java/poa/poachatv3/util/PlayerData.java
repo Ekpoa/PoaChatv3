@@ -67,6 +67,11 @@ public class PlayerData {
     @Setter
     boolean isSaving = false;
 
+    @Setter
+    boolean hasCustomPrefix = false;
+    @Setter
+    String prefixColor = PoaChatv3.INSTANCE.getConfig().getString("Prefix.defaultColor");
+
     private PlayerData(UUID uuid){
         this.uuid = uuid;
 
@@ -89,6 +94,9 @@ public class PlayerData {
 
         if(yml.isSet("CurrentTag"))
             this.currentTag = yml.getString("CurrentTag");
+
+        if(yml.isSet("HasCustomPrefix"))
+            this.hasCustomPrefix = yml.getBoolean("HasCustomPrefix");
 
         dataMap.put(uuid, this);
     }
@@ -127,6 +135,7 @@ public class PlayerData {
         yml.set("DisplayName", displayName);
         yml.set("Tags", tags);
         yml.set("CurrentTag", currentTag);
+        yml.set("HasCustomPrefix", hasCustomPrefix);
 
         if(async)
             yml.saveAsync(file);

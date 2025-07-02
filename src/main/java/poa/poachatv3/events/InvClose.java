@@ -25,6 +25,7 @@ public class InvClose implements Listener {
             InvClick.firstColorMap.remove(player);
             InvClick.isChoosingGradient.remove(player);
             InvClick.isChoosingNameColor.remove(player);
+            InvClick.isChoosingPrefixColor.remove(player);
         }, 2L); // used to ensure they didn't choose a new page
 
 

@@ -45,6 +45,12 @@ public class ColorInventory {
         else
             inventory.setItem(6, CreateItem.createItem(Material.ANVIL, "<yellow>Name Color", "<gray>Choose a name chat color", "<red>You are lacking permission to use this"));
 
+        if (player.hasPermission("poa.prefixcolor"))
+            inventory.setItem(7, CreateItem.createItem(Material.CLOCK, "<light_purple>Prefix Color", "<gray>Choose a prefix chat color"));
+        else
+            inventory.setItem(7, CreateItem.createItem(Material.CLOCK, "<light_purple>Prefix Color", "<gray>Choose a prefix chat color", "<red>You are lacking permission to use this"));
+
+
         inventory.setItem(8, CreateItem.createItem(Material.BARRIER, "<dark_red>Close"));
 
         return inventory;

@@ -3,3 +3,9 @@ DefaultNameColor: "&8"
 
 
 UsePlayerVaults: true
+
+Prefix:
+    bold: false
+    maxlength: 10
+    defaultColor: <gradient:red:yellow>
+    namebold: false

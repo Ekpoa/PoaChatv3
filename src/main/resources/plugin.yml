@@ -22,3 +22,10 @@ commands:
 
     namecolor:
         permission: poa.chat.namecolor
+
+
+    prefix:
+        permission: poa.prefix
+
+    prefixcolor:
+        permission: poa.prefixcolor

@@ -4,10 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import poa.poachatv3.commands.ChatAdmin;
-import poa.poachatv3.commands.ChatColorCMD;
-import poa.poachatv3.commands.NameColor;
-import poa.poachatv3.commands.TagsCMD;
+import poa.poachatv3.commands.*;
 import poa.poachatv3.events.*;
 import poa.poachatv3.util.PlayerData;
 
@@ -32,6 +29,8 @@ public final class PoaChatv3 extends JavaPlugin {
         getCommand("chatadmin").setExecutor(new ChatAdmin());
         getCommand("titles").setExecutor(new TagsCMD());
         getCommand("namecolor").setExecutor(new NameColor());
+        getCommand("prefix").setExecutor(new PrefixCMD());
+        getCommand("prefixcolor").setExecutor(new PrefixColor());
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             JoinLeave.joinSetup(p);

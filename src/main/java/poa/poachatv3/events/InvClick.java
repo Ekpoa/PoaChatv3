@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import poa.poachatv3.commands.ChatAdmin;
+import poa.poachatv3.commands.PrefixCMD;
 import poa.poachatv3.util.ChatColors;
 import poa.poachatv3.util.PlayerData;
 import poa.poachatv3.util.TagItems;
@@ -27,6 +28,8 @@ public class InvClick implements Listener {
     public static final List<Player> isChoosingNameColor = new ArrayList<>();
 
     public static final List<Player> isChoosingCustomColor = new ArrayList<>(); // handled in Chat
+
+    public static final List<Player> isChoosingPrefixColor = new ArrayList<>();
 
     @EventHandler
     public void mainClick(InventoryClickEvent e) {
@@ -71,6 +74,15 @@ public class InvClick implements Listener {
                 ((ChatColorHolder) Objects.requireNonNull(inventory.getHolder(false))).setChoosingNameColor(true);
                 player.openInventory(inventory);
             }
+            case 7 -> {
+                if (!player.hasPermission("poa.prefixcolor"))
+                    return;
+
+                isChoosingPrefixColor.add(player);
+                final Inventory inventory = ColorInventory.colorInventory(player);;
+                player.openInventory(inventory);
+            }
+
             case 8 -> player.closeInventory();
         }
 
@@ -133,11 +145,26 @@ public class InvClick implements Listener {
 
             String newColor = "<gradient:" + firstColorMap.get(player) + ":" + (color.replaceAll("<", "").replaceAll(">", "")) + ">";
 
+            firstColorMap.remove(player);
             playerData.setChatColor(newColor);
             player.sendRichMessage(playerData.getChatColor() + "Your chat color has been set");
         } else if (isChoosingNameColor.contains(player)) {
             playerData.setNameColor(color);
             player.sendRichMessage(playerData.getNameColor() + "Your chat name color has been set");
+        } else if (isChoosingPrefixColor.contains(player)) {
+            if (!firstColorMap.containsKey(player)) {
+                firstColorMap.put(player, color.replaceAll("<", "").replaceAll(">", ""));
+                player.sendRichMessage(color + "First color chosen. Choose second color");
+                return;
+            }
+
+            String newColor = "<gradient:" + firstColorMap.get(player) + ":" + (color.replaceAll("<", "").replaceAll(">", "")) + ">";
+
+            firstColorMap.remove(player);
+            playerData.setPrefixColor(newColor);
+            PrefixCMD.setPrefixColor(player.getUniqueId(), newColor);
+
+            player.sendRichMessage(newColor + "Your prefix color has been set");
         } else {
             playerData.setChatColor(color);
             player.sendRichMessage(playerData.getChatColor() + "Your chat color has been set");
@@ -159,10 +186,10 @@ public class InvClick implements Listener {
 
         PlayerData playerData = PlayerData.getPlayerData(player);
 
-        if(ChatAdmin.isRemovingTag.containsKey(player))
+        if (ChatAdmin.isRemovingTag.containsKey(player))
             playerData = ChatAdmin.isRemovingTag.get(player);
 
-        if(e.getClickedInventory() != e.getView().getTopInventory())
+        if (e.getClickedInventory() != e.getView().getTopInventory())
             return;
 
         PlayerData finalPlayerData = playerData;
@@ -180,7 +207,7 @@ public class InvClick implements Listener {
             } else if (nbt.hasTag("PoaTagRandom")) {
                 finalPlayerData.setCurrentTag("££RANDOM££");
                 player.closeInventory();
-                if(ChatAdmin.isRemovingTag.containsKey(player)){
+                if (ChatAdmin.isRemovingTag.containsKey(player)) {
                     player.sendRichMessage("<green>Random tags will be used when this user types");
                     return;
                 }
@@ -188,12 +215,12 @@ public class InvClick implements Listener {
                 return;
             }
 
-            if(!nbt.hasTag("PoaChatTag"))
+            if (!nbt.hasTag("PoaChatTag"))
                 return;
 
             final String tag = nbt.getString("PoaChatTag");
 
-            if(ChatAdmin.isRemovingTag.containsKey(player)){
+            if (ChatAdmin.isRemovingTag.containsKey(player)) {
                 finalPlayerData.removeTag(tag);
                 player.openInventory(TagInventories.tagInventory(finalPlayerData, page));
                 player.getInventory().addItem(TagItems.tagItem(tag, false));

@@ -1,6 +1,7 @@
 package poa.poachatv3.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,12 +10,16 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import poa.poachatv3.PoaChatv3;
 import poa.poachatv3.util.PlayerData;
 import poa.poachatv3.util.TagItems;
 import poa.poachatv3.util.inventories.TagInventories;
+import poa.poalib.luckperms.LuckPerm;
 import poa.poalib.messages.Messages;
 import poa.poalib.tabcomplete.EasyTabComplete;
+import poa.poalib.yml.PoaYaml;
 
+import java.io.File;
 import java.util.*;
 
 public class ChatAdmin implements CommandExecutor, TabCompleter {
@@ -23,7 +28,7 @@ public class ChatAdmin implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length < 2){
-            sender.sendRichMessage("<red>/chatadmin <player> <newtagitem/setcurrenttag/addtag/removetag/setchatcolor/setnamecolor/displayname>");
+            sender.sendRichMessage("<red>/chatadmin <player> <newtagitem/setcurrenttag/addtag/removetag/droptagsfromfile/setchatcolor/setnamecolor/displayname/setprefix/setprefixcolor>");
             return false;
         }
 
@@ -36,8 +41,57 @@ public class ChatAdmin implements CommandExecutor, TabCompleter {
         }
 
         switch (args[1].toLowerCase()){
+            case "setprefix" -> {
+                if(args.length < 3) {
+                    sender.sendRichMessage("<red>/chatadmin <player> setprefix <prefix/clear>");
+                    return false;
+                }
+
+                if(args[2].equalsIgnoreCase("clear")){
+                    LuckPerm.clearPrefix(target.getUniqueId());
+                    sender.sendRichMessage("<green>Cleared target's custom prefix");
+                    targetData.setHasCustomPrefix(false);
+                    return false;
+                }
+
+                final String joined = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+
+                PrefixCMD.setPrefix(target.getUniqueId(), joined);
+                sender.sendRichMessage("<green>Set prefix");
+            }
+            case "setprefixcolor" -> {
+                if(args.length < 3) {
+                    sender.sendRichMessage("<red>/chatadmin <player> setprefixcolor <minimessage/clear>");
+                    return false;
+                }
+
+                PrefixCMD.setPrefixColor(target.getUniqueId(), args[0]);
+                sender.sendRichMessage("<green>Set prefix color");
+            }
+
+            case "droptagsfromfile" -> {
+                if(args.length < 3) {
+                    sender.sendRichMessage("<red>/chatadmin <player> droptagsfromfile true\n<gray>(this will read a yml file. It just be a list under the node of Tags. Place the file named \"droptags.yml\" in the plugin's folder)");
+                    return false;
+                }
+                if(!target.isOnline()){
+                    sender.sendRichMessage("<red>This command can only be executed against online players");
+                    return false;
+                }
+
+                final Location location = target.getPlayer().getLocation();
+
+                for (String tag : PoaYaml.loadFromFile(new File(PoaChatv3.INSTANCE.getDataFolder(), "droptags.yml"), true).getStringList("Tags")) {
+                    tag = tag.replaceAll("\\[", "").replaceAll("]", "");
+                    tag = "<dark_gray>[" + tag + "<dark_gray>]";
+
+                    location.getWorld().dropItem(location, TagItems.tagItem(tag, false));
+                }
+
+
+            }
             case "newtagitem" -> {
-                if(args.length < 4) {
+                if(args.length < 3) {
                     sender.sendRichMessage("<red>/chatadmin <player> newtagitem [<addbracket = true>] <tag>\n<gray>(the add bracket option is optional)");
                     return false;
                 }
@@ -134,7 +188,7 @@ public class ChatAdmin implements CommandExecutor, TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return switch (args.length){
             case 1 -> EasyTabComplete.correctTabComplete(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
-            case 2 -> EasyTabComplete.correctTabComplete(args[1], "newtagitem", "setcurrenttag", "addtag", "removetag", "setchatcolor", "setnamecolor", "displayname");
+            case 2 -> EasyTabComplete.correctTabComplete(args[1], "newtagitem", "setcurrenttag", "addtag", "removetag", "setchatcolor", "setnamecolor", "displayname", "droptagsfromfile", "setprefix", "setprefixcolor");
             default -> List.of();
         };
     }
