@@ -10,7 +10,7 @@ commands:
         aliases:
             - namecolor
             - chatcolour
-            - namecolour
+
         permission: poa.chatcolor
 
     chatadmin:
@@ -19,3 +19,6 @@ commands:
     tags:
         aliases:
             - titles
+
+    namecolor:
+        permission: poa.chat.namecolor

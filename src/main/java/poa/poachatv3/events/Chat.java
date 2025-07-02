@@ -18,16 +18,14 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import poa.poachatv3.PoaChatv3;
-import poa.poachatv3.util.ChatColors;
 import poa.poachatv3.util.PlayerData;
 import poa.poachatv3.util.inventories.holders.ChatHolder;
 import poa.poalib.economy.Economy;
 import poa.poalib.items.ItemNullCheck;
+import poa.poalib.luckperms.LuckPerm;
 import poa.poalib.messages.Messages;
-import poa.poalib.shaded.NBT;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +39,6 @@ import java.util.regex.Pattern;
 
 public class Chat implements Listener {
 
-    private static final Map<UUID, Inventory> inventoryChatMap = new HashMap<>();
 
 
     private static Object vaultManagerInstance;
@@ -62,6 +59,7 @@ public class Chat implements Listener {
         }
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @EventHandler
     public void onChat(AsyncChatEvent e) {
         if (e.isCancelled())
@@ -74,7 +72,7 @@ public class Chat implements Listener {
         final String chatColor = playerData.getChatColor();
         final String nameColor = playerData.getNameColor();
 
-        final String stringDisplayName = playerData.getDisplayName();
+
 
         String tag = playerData.getCurrentTag();
 
@@ -90,7 +88,11 @@ public class Chat implements Listener {
         if (!tag.isEmpty()) {
             tag = " " + tag;
         }
-        final Component displayname = MiniMessage.miniMessage().deserialize(nameColor + stringDisplayName + tag);
+
+        final String prefix = Messages.essentialsToMinimessage(LuckPerm.getPrefix(player));
+        final String stringDisplayName = prefix + nameColor + playerData.getDisplayName();
+
+        final Component displayname = MiniMessage.miniMessage().deserialize(stringDisplayName + tag);
 
 
         //start of chat modules
@@ -138,7 +140,6 @@ public class Chat implements Listener {
                     player.sendMessage(MiniMessage.miniMessage().deserialize("<gold>[level] <yellow>Shows level"));
 
                 player.sendMessage("");
-                player.sendMessage(MiniMessage.miniMessage().deserialize("<gold>:skull: <yellow>\u2620"));
             } else
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red>You do not have permission to use this module"));
         } else if (rawMessage.contains("[item]")) {
@@ -384,7 +385,7 @@ public class Chat implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                int vault = 1;
+                int vault;
                 try {
                     vault = Integer.parseInt(pv);
                 } catch (Exception ignored) {
@@ -441,6 +442,7 @@ public class Chat implements Listener {
     }
 
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static String getArg(String startOfSplit, String rawMessage) {
         String regex = "\\[" + startOfSplit + "\\s+(\\S+)]";
         Pattern pattern = Pattern.compile(regex);
