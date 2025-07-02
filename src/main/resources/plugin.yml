@@ -1,0 +1,21 @@
+name: PoaChatv3
+version: '${project.version}'
+main: poa.poachatv3.PoaChatv3
+api-version: '1.21'
+softdepend:
+    - PoaLib
+
+commands:
+    chatcolor:
+        aliases:
+            - namecolor
+            - chatcolour
+            - namecolour
+        permission: poa.chatcolor
+
+    chatadmin:
+        permission: poa.chatadmin
+
+    tags:
+        aliases:
+            - titles
