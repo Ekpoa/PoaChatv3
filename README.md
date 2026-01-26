@@ -1,1 +1,9 @@
-<img width="200" height="143" alt="image" src="https://github.com/user-attachments/assets/7db80f07-91e2-4fc1-b1cf-06285216fe4d" />
+
+
+<img src="assets/gif.gif" width="400">
+<img src="assets/color_page1.png" width="400">
+<img src="assets/color_page2.png" width="400">
+
+<img src="assets/img_1.png" width="400">
+<img src="assets/img_2.png" width="400">
+

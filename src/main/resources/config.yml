@@ -7,5 +7,5 @@ UsePlayerVaults: true
 Prefix:
     bold: false
     maxlength: 10
-    defaultColor: <gradient:red:yellow>
+    defaultColor: <gradient:red:yellow> # only applies to those who have changed it
     namebold: false

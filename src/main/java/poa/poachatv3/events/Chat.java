@@ -40,7 +40,6 @@ import java.util.regex.Pattern;
 public class Chat implements Listener {
 
 
-
     private static Object vaultManagerInstance;
     private static Method loadVaultMethod;
 
@@ -66,12 +65,11 @@ public class Chat implements Listener {
             return;
 
         final Component componentMessage = e.message();
-        final String rawMessage = PlainTextComponentSerializer.plainText().serialize(componentMessage);
+        String rawMessage = PlainTextComponentSerializer.plainText().serialize(componentMessage);
         final Player player = e.getPlayer();
         final PlayerData playerData = PlayerData.getPlayerData(player);
         final String chatColor = playerData.getChatColor();
         final String nameColor = playerData.getNameColor();
-
 
 
         String tag = playerData.getCurrentTag();
@@ -89,11 +87,18 @@ public class Chat implements Listener {
             tag = " " + tag;
         }
 
-        final String prefix = Messages.essentialsToMinimessage(LuckPerm.getPrefix(player));
+        final String lpPrefix = LuckPerm.getPrefix(player);
+        String prefix = "";
+        if (lpPrefix != null)
+            prefix = Messages.essentialsToMinimessage(lpPrefix);
+
         final String stringDisplayName = prefix + nameColor + playerData.getDisplayName();
 
         final Component displayname = MiniMessage.miniMessage().deserialize(stringDisplayName + tag);
 
+
+        if (rawMessage.contains(":skull:"))
+            rawMessage = rawMessage.replaceAll(":skull:", "☠");
 
         //start of chat modules
 
@@ -358,12 +363,11 @@ public class Chat implements Listener {
                 String statString = getArg("mined", rawMessage);
                 try {
                     int value = 0;
-                    if(statString.equalsIgnoreCase("all")){
+                    if (statString.equalsIgnoreCase("all")) {
                         for (Material material : Material.values()) {
                             value = value + player.getStatistic(Statistic.MINE_BLOCK, material);
                         }
-                    }
-                    else {
+                    } else {
                         Material material = Material.valueOf(statString.toUpperCase());
                         value = player.getStatistic(Statistic.MINE_BLOCK, material);
                     }
@@ -408,20 +412,14 @@ public class Chat implements Listener {
             } else
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red>You do not have permission to use this module"));
 
-        }
-        else // if no modules are used
+        } else // if no modules are used
             e.message(MiniMessage.miniMessage().deserialize(chatColor + "<message>", Placeholder.unparsed("message", rawMessage)));
-
 
 
         e.renderer((sender, displayName, inputMessage, viewingPlayer) ->
                 Component.join(JoinConfiguration.separator(Component.text(" ")), displayname, e.message()));
 
     }
-
-
-
-
 
 
     private static Component messageSplit(String split, String replace, String rawMessage, PlayerData playerData) {
@@ -499,12 +497,6 @@ public class Chat implements Listener {
 
         return inventory;
     }
-
-
-
-
-
-
 
 
     // custom color handling

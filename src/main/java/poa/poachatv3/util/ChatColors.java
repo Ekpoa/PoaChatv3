@@ -162,11 +162,11 @@ public class ChatColors {
 
     public boolean hasPermission(Player player) {
         final String[] permissions = getPermissions();
-        return player.hasPermission(permissions[0]) || player.hasPermission(permissions[1]);
+        return player.hasPermission(permissions[0]) || player.hasPermission(permissions[1]) || player.hasPermission(permissions[2]);
     }
 
     public String[] getPermissions() {
-        return new String[]{"poa.chat.color." + (colorName.toLowerCase().replaceAll(" ", "_")), "poa.chat.color." + category.toLowerCase()};
+        return new String[]{"poa.chat.color." + (colorName.toLowerCase().replaceAll(" ", "_")), "poa.chat.color.all." + category.toLowerCase(), "poa.chat.color.all.all"};
     }
 
 }
