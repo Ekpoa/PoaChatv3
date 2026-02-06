@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import poa.poalib.items.CreateItem;
 import poa.poalib.shaded.NBT;
 
@@ -151,6 +152,12 @@ public class ChatColors {
         ItemStack item = CreateItem.createItem(material, chatColor + colorName, "<gray>Click to set as chat color");
         if (!hasPermission(player))
             item = CreateItem.createItem(material, chatColor + colorName, "<red>You do not have permission to use this color");
+        else{
+            final ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setEnchantmentGlintOverride(true);
+            item.setItemMeta(itemMeta);
+        }
+
 
         NBT.modify(item, nbt -> {
             nbt.setString("PoaColorName", colorName);
